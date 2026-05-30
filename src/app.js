@@ -5,7 +5,6 @@ import morgan from "morgan";
 import config from "./config/config.js";
 import errorHandler from "./middlewares/error.handler.js";
 import { authLimiter, globalLimiter } from "./middlewares/rateLimiter.js";
-import noteRoute from "./routes/note.route.js";
 import userRoute from "./routes/user.route.js";
 
 // express instance
@@ -29,7 +28,7 @@ app.get("/check", (_, res) => {
 });
 
 // route branching
-
+app.use("/api/user", userRoute);
 
 // global error handler
 app.use(errorHandler);
