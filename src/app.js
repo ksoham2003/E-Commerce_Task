@@ -2,9 +2,11 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
 import morgan from "morgan";
+import path from "path";
 import config from "./config/config.js";
 import errorHandler from "./middlewares/error.handler.js";
 import { authLimiter, globalLimiter } from "./middlewares/rateLimiter.js";
+import productRoute from "./routes/product.route.js";
 import userRoute from "./routes/user.route.js";
 
 // express instance
@@ -22,6 +24,9 @@ app.use(
 	}),
 );
 
+// static uploads folder
+app.use("/uploads", express.static("uploads"));
+
 // health check
 app.get("/check", (_, res) => {
 	res.send("API running");
@@ -29,6 +34,7 @@ app.get("/check", (_, res) => {
 
 // route branching
 app.use("/api/user", userRoute);
+app.use("/api/products", productRoute);
 
 // global error handler
 app.use(errorHandler);
