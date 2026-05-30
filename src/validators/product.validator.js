@@ -8,13 +8,15 @@ const createProductValidator = (data) => {
 		throw new ApiError(400, "Product name is required");
 	}
 
-	if (price === undefined || price === null) {
+	if (price === undefined || price === null || String(price).trim() === "") {
 		throw new ApiError(400, "Product price is required");
 	}
 
-	if (typeof price !== "number" || isNaN(price) || price < 0) {
+	const parsedPrice = Number(price);
+	if (isNaN(parsedPrice) || parsedPrice < 0) {
 		throw new ApiError(400, "Price must be a valid number (>= 0)");
 	}
+	data.price = parsedPrice;
 
 	if (data.category && typeof data.category !== "string") {
 		throw new ApiError(400, "Category must be a string");
@@ -39,9 +41,14 @@ const updateProductValidator = (data) => {
 	}
 
 	if (data.price !== undefined) {
-		if (typeof data.price !== "number" || isNaN(data.price) || data.price < 0) {
+		if (String(data.price).trim() === "") {
+			throw new ApiError(400, "Price cannot be empty");
+		}
+		const parsedPrice = Number(data.price);
+		if (isNaN(parsedPrice) || parsedPrice < 0) {
 			throw new ApiError(400, "Price must be a valid number (>= 0)");
 		}
+		data.price = parsedPrice;
 	}
 
 	if (data.category !== undefined && typeof data.category !== "string") {
