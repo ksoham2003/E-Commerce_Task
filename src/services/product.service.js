@@ -7,7 +7,7 @@ import {
 } from "../validators/product.validator.js";
 
 const getAllProductsService = async (query) => {
-	const filter = {};
+	const filter = { isDeleted: { $ne: true } };
 
 	if (query.category) {
 		filter.category = query.category.toLowerCase();
@@ -20,7 +20,7 @@ const getAllProductsService = async (query) => {
 const getProductByIdService = async (id) => {
 	validateObjectId(id);
 
-	const product = await Product.findById(id);
+	const product = await Product.findOne({ _id: id, isDeleted: { $ne: true } });
 	if (!product) {
 		throw new ApiError(404, "Product not found");
 	}
@@ -43,10 +43,14 @@ const updateProductService = async (id, data) => {
 	validateObjectId(id);
 	const validatedData = updateProductValidator(data);
 
-	const product = await Product.findByIdAndUpdate(id, validatedData, {
-		new: true,
-		runValidators: true,
-	});
+	const product = await Product.findOneAndUpdate(
+		{ _id: id, isDeleted: { $ne: true } },
+		validatedData,
+		{
+			new: true,
+			runValidators: true,
+		},
+	);
 
 	if (!product) {
 		throw new ApiError(404, "Product not found");
@@ -58,7 +62,15 @@ const updateProductService = async (id, data) => {
 const deleteProductService = async (id) => {
 	validateObjectId(id);
 
-	const product = await Product.findByIdAndDelete(id);
+	const product = await Product.findOneAndUpdate(
+		{ _id: id, isDeleted: { $ne: true } },
+		{
+			isDeleted: true,
+			deletedAt: new Date(),
+		},
+		{ new: true },
+	);
+
 	if (!product) {
 		throw new ApiError(404, "Product not found");
 	}
