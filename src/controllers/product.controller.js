@@ -9,17 +9,17 @@ import {
 import ApiResponse from "../utils/apiResponse.js";
 
 /**
- * @desc    Get all products (with optional category filter)
- * @route   GET /api/products?category=electronics
+ * @desc    Get all products (with optional category filter and pagination)
+ * @route   GET /api/products?category=electronics&page=1&limit=10
  * @access  Public
  */
 export const getAllProducts = asyncHandler(async (req, res) => {
-	const products = await getAllProductsService(req.query);
+	const result = await getAllProductsService(req.query);
 
 	return res
 		.status(200)
 		.json(
-			new ApiResponse(200, "Products fetched successfully", products),
+			new ApiResponse(200, "Products fetched successfully", result),
 		);
 });
 
@@ -68,12 +68,11 @@ export const createProduct = asyncHandler(async (req, res) => {
 export const updateProduct = asyncHandler(async (req, res) => {
 	const updateData = { ...req.body };
 
-	// attach uploaded image paths if new files were uploaded
 	if (req.files && req.files.length > 0) {
 		updateData.images = req.files.map((file) => file.filename);
 	}
 
-	const product = await updateProductService(req.params.id, updateData);
+	const product = await updateProductService(req.params.id, updateData, req.user);
 
 	return res
 		.status(200)
@@ -88,7 +87,7 @@ export const updateProduct = asyncHandler(async (req, res) => {
  * @access  Private (JWT required)
  */
 export const deleteProduct = asyncHandler(async (req, res) => {
-	await deleteProductService(req.params.id);
+	await deleteProductService(req.params.id, req.user);
 
 	return res
 		.status(200)

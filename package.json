@@ -1,8 +1,8 @@
 {
   "name": "e-commerce_task",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "E-Commerce Product API with JWT authentication and product CRUD operations",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
@@ -10,9 +10,9 @@
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
+    "chalk": "^5.6.2",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
-    "crypto": "^1.0.1",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "express-rate-limit": "^8.5.2",
@@ -26,7 +26,6 @@
   "license": "ISC",
   "type": "module",
   "devDependencies": {
-    "chalk": "^5.6.2",
     "nodemon": "^3.1.0"
   }
 }

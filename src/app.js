@@ -25,7 +25,7 @@ app.use(
 );
 
 // static uploads folder
-app.use("/uploads", express.static("uploads"));
+app.use("/uploads", express.static("uploads", { maxAge: "1d" }));
 
 // health check
 app.get("/check", (_, res) => {
