@@ -4,7 +4,11 @@ import config from "./config.js";
 
 const connectDB = async () => {
 	try {
-		const conn = await mongoose.connect(config.MONGO_URI);
+		const conn = await mongoose.connect(config.MONGO_URI, {
+			maxPoolSize: 10,
+			serverSelectionTimeoutMS: 5000,
+			socketTimeoutMS: 45000,
+		});
 		console.log(chalk.bgGreen("Database connected"));
 		return conn;
 	} catch (error) {

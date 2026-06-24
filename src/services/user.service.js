@@ -8,7 +8,7 @@ const registerService = async (data) => {
 
 	const user = await User.findOne({ email });
 	if (user) {
-		throw new ApiError(400, "User already exist");
+		throw new ApiError(400, "User already exists");
 	}
 
 	const newUser = await User.create({
@@ -18,9 +18,8 @@ const registerService = async (data) => {
 	});
 
 	const token = generateToken(newUser._id);
+	const safeUser = newUser.toSafeObject();
 
-	const safeUser = newUser.toObject();
-	delete safeUser.password;
 	return {
 		token,
 		safeUser,
@@ -30,20 +29,19 @@ const registerService = async (data) => {
 const loginService = async (data) => {
 	const { email, password } = loginValidator(data);
 
-	const user = await User.findOne({ email });
+	const user = await User.findOne({ email }).select("+password");
 	if (!user) {
-		throw new ApiError(400, "Invalid Credentials");
+		throw new ApiError(400, "Invalid credentials");
 	}
 
 	const validatePassword = await user.comparePassword(password);
 	if (!validatePassword) {
-		throw new ApiError(400, "Invalid Credentials");
+		throw new ApiError(400, "Invalid credentials");
 	}
 
 	const token = generateToken(user._id);
+	const safeUser = user.toSafeObject();
 
-	const safeUser = user.toObject();
-	delete safeUser.password;
 	return {
 		token,
 		safeUser,

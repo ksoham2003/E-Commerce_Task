@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { login, logout, register } from "../controllers/user.controller.js";
+import { authLimiter } from "../middlewares/rateLimiter.js";
 
 const router = Router();
 
@@ -10,15 +11,15 @@ router.get("/check", (_, res) => {
 
 /**
  * path: /api/user/register (POST)
- * des: User register in database and gets a token in cookies
+ * des: User registers in database and gets a token in cookies
  */
-router.post("/register", register);
+router.post("/register", authLimiter, register);
 
 /**
  * path: /api/user/login (POST)
  * des: User gets a token in cookies
  */
-router.post("/login", login);
+router.post("/login", authLimiter, login);
 
 /**
  * path: /api/user/logout (POST)
