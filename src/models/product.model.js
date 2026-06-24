@@ -44,6 +44,11 @@ const productSchema = new mongoose.Schema(
 	{ timestamps: true },
 );
 
+productSchema.index({ category: 1 });
+productSchema.index({ createdBy: 1 });
+productSchema.index({ isDeleted: 1 });
+productSchema.index({ isDeleted: 1, createdAt: -1 });
+
 const Product = mongoose.model("Product", productSchema);
 
 export default Product;

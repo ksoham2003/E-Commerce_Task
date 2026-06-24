@@ -16,7 +16,6 @@ const createProductValidator = (data) => {
 	if (isNaN(parsedPrice) || parsedPrice < 0) {
 		throw new ApiError(400, "Price must be a valid number (>= 0)");
 	}
-	data.price = parsedPrice;
 
 	if (data.category && typeof data.category !== "string") {
 		throw new ApiError(400, "Category must be a string");
@@ -26,7 +25,10 @@ const createProductValidator = (data) => {
 		throw new ApiError(400, "Description must be a string");
 	}
 
-	return data;
+	return {
+		...data,
+		price: parsedPrice,
+	};
 };
 
 const updateProductValidator = (data) => {
@@ -34,32 +36,34 @@ const updateProductValidator = (data) => {
 		throw new ApiError(400, "At least one field is required to update");
 	}
 
-	if (data.name !== undefined) {
-		if (typeof data.name !== "string" || data.name.trim().length === 0) {
+	const result = { ...data };
+
+	if (result.name !== undefined) {
+		if (typeof result.name !== "string" || result.name.trim().length === 0) {
 			throw new ApiError(400, "Product name cannot be empty");
 		}
 	}
 
-	if (data.price !== undefined) {
-		if (String(data.price).trim() === "") {
+	if (result.price !== undefined) {
+		if (String(result.price).trim() === "") {
 			throw new ApiError(400, "Price cannot be empty");
 		}
-		const parsedPrice = Number(data.price);
+		const parsedPrice = Number(result.price);
 		if (isNaN(parsedPrice) || parsedPrice < 0) {
 			throw new ApiError(400, "Price must be a valid number (>= 0)");
 		}
-		data.price = parsedPrice;
+		result.price = parsedPrice;
 	}
 
-	if (data.category !== undefined && typeof data.category !== "string") {
+	if (result.category !== undefined && typeof result.category !== "string") {
 		throw new ApiError(400, "Category must be a string");
 	}
 
-	if (data.description !== undefined && typeof data.description !== "string") {
+	if (result.description !== undefined && typeof result.description !== "string") {
 		throw new ApiError(400, "Description must be a string");
 	}
 
-	return data;
+	return result;
 };
 
 const validateObjectId = (id) => {
